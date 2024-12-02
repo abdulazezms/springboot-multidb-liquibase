@@ -1,25 +1,23 @@
 spring:
-
   application:
     name: multi-dbs
 
   # Users Database
   users-database:
-
     jpa:
       properties: # native properties to set on the JPA provider.
         hibernate.hbm2ddl.auto: validate
       show-sql: true
 
     datasource:
-      username: ${USERS_DB_APP_USER}
-      password: ${USERS_DB_APP_PASSWORD}
-      url: ${USERS_DB_URL}
+      username: users_db_app_user
+      password: users_db_app_password
+      url: jdbc:postgresql://${DB_HOST_PORT}/users_db
 
     liquibase:
-      username: ${USERS_DB_LIQUIBASE_USER}
-      password: ${USERS_DB_LIQUIBASE_PASSWORD}
-      url: ${USERS_DB_URL}
+      username: users_db_liquibase_user
+      password: users_db_liquibase_password
+      url: jdbc:postgresql://${DB_HOST_PORT}/users_db
       properties:
         change-log: classpath:db/users-database/changelog/db.changelog-root.xml
 
@@ -27,21 +25,20 @@ spring:
 
   # Orders Database
   orders-database:
-
     jpa:
       properties:
         hibernate.hbm2ddl.auto: validate
       show-sql: true
 
     datasource:
-      username: ${ORDERS_DB_APP_USER}
-      password: ${ORDERS_DB_APP_PASSWORD}
-      url: ${ORDERS_DB_URL}
+      username: orders_db_app_user
+      password: orders_db_app_password
+      url: jdbc:postgresql://${DB_HOST_PORT}/orders_db
 
     liquibase:
-      username: ${ORDERS_DB_LIQUIBASE_USER}
-      password: ${ORDERS_DB_LIQUIBASE_PASSWORD}
-      url: ${ORDERS_DB_URL}
+      username: orders_db_liquibase_user
+      password: orders_db_liquibase_password
+      url: jdbc:postgresql://${DB_HOST_PORT}/orders_db
       properties:
         change-log: classpath:db/orders-database/changelog/db.changelog-root.xml
 
@@ -49,21 +46,20 @@ spring:
 
   # Payments Database
   payments-database:
-
     jpa:
       properties:
         hibernate.hbm2ddl.auto: validate
       show-sql: true
 
     datasource:
-      username: ${PAYMENTS_DB_APP_USER}
-      password: ${PAYMENTS_DB_APP_PASSWORD}
-      url: ${PAYMENTS_DB_URL}
+      username: payments_db_app_user
+      password: payments_db_app_password
+      url: jdbc:postgresql://${DB_HOST_PORT}/payments_db
 
     liquibase:
-      username: ${PAYMENTS_DB_LIQUIBASE_USER}
-      password: ${PAYMENTS_DB_LIQUIBASE_PASSWORD}
-      url: ${PAYMENTS_DB_URL}
+      username: payments_db_liquibase_user
+      password: payments_db_liquibase_password
+      url: jdbc:postgresql://${DB_HOST_PORT}/payments_db
       properties:
         change-log: classpath:db/payments-database/changelog/db.changelog-root.xml
 
@@ -71,4 +67,4 @@ spring:
 
 logging:
   level:
-    com.aziz.multidbs: ${APP_LOGGING_LEVEL:INFO}
+    com.aziz.multidbs: DEBUG

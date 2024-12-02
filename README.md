@@ -1,29 +1,49 @@
 # Spring Boot Multi-Database with Liquibase
 
 ## Overview
-This Spring Boot application demonstrates the configuration of multiple databases with Liquibase integration. It is designed to mimic a real-world scenario where credit card data is distributed across different databases. This ensures that if one database is compromised, the other segments remain secure.
+This Spring Boot application demonstrates the configuration of multiple databases with Liquibase integration. 
 
-## Features
-- **Multi-Database Configuration**: Each domain (Card, CardHolder, and PAN) uses its own database to enhance security and isolation.
-- **Liquibase Integration**: Database migration management for each database to ensure schema consistency across environments. Each database has its changelog files organized in a directory named after the database.
-- **Dedicated Liquibase User**: Each database utilizes a dedicated user for executing Liquibase to promote security and proper access control.
-- **Data Encryption at Rest**: Ensures that sensitive data is encrypted when stored, further securing data from unauthorized access.
-- **Domain-Driven Design**: Clear separation of domains to encapsulate the logic of each banking segment.
-
-## Technology Stack
-- Spring Boot
-- Java
-- MySQL
-- Liquibase
+## What is included?
+- **Multi-Database Configuration**: Each domain (Users, Orders, and Payments) uses its own database.
+- **Liquibase Integration**: Database migration management for each database. Each database has its changelog files organized in a directory named after the database.
+- **Dedicated Liquibase User**: Each database has a dedicated user with DDL permissions for performing Liquibase updates.
+- **Dedicated App User**: Each database utilizes a dedicated user with DML permissions for performing CRUD operations through the app.
 
 ## Project Structure
-- `src/main/java` - Contains the source files for the application.
-- `src/main/resources/db` - Contains Liquibase changelogs organized by database name (cardholder, creditcard, pan).
-- `scripts/` - Includes SQL setup scripts for initial database setup.
-- `src/test/java` - Contains simple tests to ensure writes/reads work against multiple databases.
 
+```
+└── spring-boot-multi-database
+├── scripts/
+│   └── init.sql                       # Includes SQL setup instructions for creating the databases, users, and grants.
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/aziz/multidbs/
+│   │   │       └── config/
+│   │   │           └── db/            # Contains base Database classes with common properties and factories.
+│   │   │               ├── users/     # Contains Database related configuration to allow Liquibase and the app to use their own separate DataSources when connecting to the users database.
+│   │   │               ├── orders/    # Contains Database related configuration to allow Liquibase and the app to use their own separate DataSources when connecting to the orders database.
+│   │   │               └── payments/  # Contains Database related configuration to allow Liquibase and the app to use their own separate DataSources when connecting to the payments database.
+│   │   └── resources/
+│   │       └── db/
+│   │           ├── users-database/    # Liquibase changelogs for users database
+│   │           ├── orders-database/   # Liquibase changelogs for orders database
+│   │           └── payments-database/ # Liquibase changelogs for payments database
+│   └── test/
+│       └── java/
+│           └── com/aziz/multidbs/
+│               └── service/
+│                   └── PaymentServiceTest.java     # Contains an integration test to ensure proper connection is made against all the databases.
+└── docker-compose.yml                              # Docker Compose configuration
+```
 
-## Setup and Installation
-1. Ensure you have Java and Maven installed.
-2. Set up your MySQL database using the scripts provided in `scripts/mysql-setup.sql`.
-3. Configure your database connections in `src/main/resources/application.yaml`.
+## Context Initialization High Level Steps
+1. SpringLiquibase beans get registered (1 for each database).
+2. Each of them will run the new changelog files, if any, against the corresponding database, using the credentials and properties configured in `application.yml` for that database.
+3. App is initialized and 3 `LocalContainerEntityManagerFactoryBean` are exposed to be used by the app. One for each database. 
+4. Whenever a JPA related logic is performed, the correct beans (transaction manager, entity manager factory, etc.) associated with that database will be used. 
+
+## Usage
+```shell
+docker-compose up
+```
