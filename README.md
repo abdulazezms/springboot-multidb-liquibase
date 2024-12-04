@@ -7,7 +7,7 @@ This Spring Boot application demonstrates the configuration of multiple database
 - **Multi-Database Configuration**: Each domain (Users, Orders, and Payments) uses its own database.
 - **Liquibase Integration**: Database migration management for each database. Each database has its changelog files organized in a directory named after the database.
 - **Dedicated Liquibase User**: Each database has a dedicated user with DDL permissions for performing Liquibase updates.
-- **Dedicated App User**: Each database utilizes a dedicated user with DML permissions for performing CRUD operations through the app.
+- **Dedicated App User**: Each database has a dedicated user with DML permissions for performing CRUD operations through the app.
 
 ## Project Structure
 
