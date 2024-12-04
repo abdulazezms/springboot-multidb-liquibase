@@ -1,0 +1,36 @@
+services:
+
+  app:
+    container_name: app
+    env_file:
+      - env/app.env
+    depends_on:
+      db-host:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+
+  db-host:
+    container_name: db-host
+    image: postgres:17-alpine
+    env_file:
+      - env/db.env
+    ports:
+      - "5456:5432"
+    volumes:
+      - db-host-volume:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "users_db", "-U", "users_db_app_user" ]
+      interval: 5s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+
+
+volumes:
+  db-host-volume:
+    driver: local
