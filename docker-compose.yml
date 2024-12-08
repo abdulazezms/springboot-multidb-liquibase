@@ -23,13 +23,16 @@ services:
     volumes:
       - db-host-volume:/var/lib/postgresql/data
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./backup-utils/:/tmp/utils/
+      - ./backups/:/tmp/backups
+      - ./fix_permissions.sh:/docker-entrypoint-initdb.d/fix_permissions.sh  # Mount the script here
+
     healthcheck:
       test: [ "CMD", "pg_isready", "-q", "-d", "users_db", "-U", "users_db_app_user" ]
       interval: 5s
       timeout: 60s
       retries: 5
       start_period: 80s
-
 
 volumes:
   db-host-volume:
