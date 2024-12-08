@@ -1,0 +1,39 @@
+https://www.depesz.com/2024/01/08/waiting-for-postgresql-17-add-support-for-incremental-backup/
+
+https://www.postgresql.org/docs/devel/runtime-config-wal.html#RUNTIME-CONFIG-WAL-SUMMARIZATION
+
+
+
+
+
+
+
+
+
+
+19.5.7. WAL Summarization
+These settings control WAL summarization, a feature which must be enabled in order to perform an incremental backup.
+
+summarize_wal (boolean)
+Enables the WAL summarizer process. Note that WAL summarization can be enabled either on a primary or on a standby. This parameter can only be set in the postgresql.conf file or on the server command line. The default is off.
+
+The server cannot be started with summarize_wal=on if wal_level is set to minimal. If summarize_wal=on is configured after server startup while wal_level=minimal, the summarizer will run but refuse to generate summary files for any WAL generated with wal_level=minimal.
+
+wal_summary_keep_time (integer)
+Configures the amount of time after which the WAL summarizer automatically removes old WAL summaries. The file timestamp is used to determine which files are old enough to remove. Typically, you should set this comfortably higher than the time that could pass between a backup and a later incremental backup that depends on it. WAL summaries must be available for the entire range of WAL records between the preceding backup and the new one being taken; if not, the incremental backup will fail. If this parameter is set to zero, WAL summaries will not be automatically deleted, but it is safe to manually remove files that you know will not be required for future incremental backups. This parameter can only be set in the postgresql.conf file or on the server command line. If this value is specified without units, it is taken as minutes. The default is 10 days. If summarize_wal = off, existing WAL summaries will not be removed regardless of the value of this parameter, because the WAL summarizer will not run.
+
+Ref: https://www.postgresql.org/docs/devel/runtime-config-wal.html#RUNTIME-CONFIG-WAL-SUMMARIZATION
+
+
+
+
+
+
+
+
+
+WAL summarization allows the server to detect which blocks have changed since the last full/base backup. The details are described in here.
+
+To figure out which blocks need to be backed up, the server uses WAL summaries, which are stored in the data directory, inside the directory pg_wal/summaries. If the required summary files are not present, an attempt to take an incremental backup will fail. The summaries present in this directory must cover all LSNs from the start LSN of the prior backup to the start LSN of the current backup.
+
+https://www.postgresql.org/docs/current/continuous-archiving.html#BACKUP-INCREMENTAL-BACKUP
