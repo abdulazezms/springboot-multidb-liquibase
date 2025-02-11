@@ -157,12 +157,6 @@ cd springboot-multidb-liquibase
 docker-compose up
 ```
 
-The Docker setup includes:
-- PostgreSQL container
-- Automatic database creation
-- User setup with appropriate permissions
-- Health check configuration
-
 
 ## Database Configuration Details
 
@@ -284,4 +278,4 @@ static void setUp() {
 - A single simple integration test is written to ensure the correct datasource is used per repository. 
 ```mvn
 ./mvnw clean verify
-- ```
+```
